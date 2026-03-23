@@ -1,0 +1,37 @@
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+UserSettings/
+MemoryCaptures/
+.vs/
+.idea/
+.gradle/
+ExportedObj/
+sysinfo.txt
+.utmp/
+
+# Auto-generated VS/MD/solution files
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.slnx
+
+# Crash reports
+sysinfo.txt
+
+# VS Code
+.vscode/
+
+test_BackUpThisFolder_ButDontShipItWithYourGame/
+test.apk
+Packages/com.ptc.vuforia.engine-11.4.4.tgz
