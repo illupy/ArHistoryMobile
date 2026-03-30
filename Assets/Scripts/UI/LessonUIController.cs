@@ -3,12 +3,14 @@ using UnityEngine;
 
 public class LessonUIController : MonoBehaviour
 {
-    public TextMeshProUGUI titleText;
-    public TextMeshProUGUI descriptionText;
+    public TextMeshProUGUI lessonTitleText;
+    public TextMeshProUGUI stepTitleText;
+    public TextMeshProUGUI stepContentText;
 
-    public void ShowLesson(string title, string description)
+    public void ShowLesson(string lessonTitle, string stepTitle, string stepContent)
     {
-        titleText.text = title;
-        descriptionText.text = description;
+        lessonTitleText.text = lessonTitle;
+        stepTitleText.text = stepTitle;
+        stepContentText.text = stepContent;
     }
 }

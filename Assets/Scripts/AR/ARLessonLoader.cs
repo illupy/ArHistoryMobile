@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 public class ARLessonLoader : MonoBehaviour
 {
     [SerializeField] private LessonApiService lessonApiService;
-    [SerializeField] private LessonUIController lessonUIController;
+    [SerializeField] private ARSceneManager arSceneManager;
     [SerializeField] private string markerCode = "BACH_DANG_001";
 
     private bool hasLoaded = false;
@@ -25,10 +25,7 @@ public class ARLessonLoader : MonoBehaviour
 
                 if (response != null && response.success && response.data != null)
                 {
-                    lessonUIController.ShowLesson(
-                        response.data.title,
-                        response.data.description
-                    );
+                    arSceneManager.OnLessonLoaded(response.data);
                 }
             },
             error =>
