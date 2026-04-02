@@ -9,26 +9,12 @@ public class ARSceneManager : MonoBehaviour
 
     public LessonUIController lessonUIController;
     public CompletionPanelController completionPanelController;
+    public ARContentPresenter arContentPresenter;
 
+    private LessonDetailResponse currentLesson;
     private int currentStepIndex = 0;
 
-    // Mock dữ liệu tạm để test UI
-    private string lessonTitle = "Trận Bạch Đằng";
-
-    private string[] stepTitles =
-    {
-        "Bước 1",
-        "Bước 2",
-        "Bước 3"
-    };
-
-    private string[] stepContents =
-    {
-        "Giới thiệu bối cảnh của sự kiện lịch sử.",
-        "Mô tả diễn biến chính của sự kiện.",
-        "Kết quả và ý nghĩa của sự kiện."
-    };
-
+    // Tạm thời mock cờ chức năng
     private bool hasQuiz = true;
     private bool hasGamification = true;
 
@@ -44,8 +30,9 @@ public class ARSceneManager : MonoBehaviour
         completionPanel.SetActive(false);
     }
 
-    public void StartLesson()
+    public void OnLessonLoaded(LessonDetailResponse lesson)
     {
+        currentLesson = lesson;
         currentStepIndex = 0;
 
         scanGuidePanel.SetActive(false);
@@ -57,7 +44,10 @@ public class ARSceneManager : MonoBehaviour
 
     public void NextStep()
     {
-        if (currentStepIndex < stepContents.Length - 1)
+        if (currentLesson == null || currentLesson.assets == null || currentLesson.assets.Count == 0)
+            return;
+
+        if (currentStepIndex < currentLesson.assets.Count - 1)
         {
             currentStepIndex++;
             ShowCurrentStep();
@@ -70,6 +60,9 @@ public class ARSceneManager : MonoBehaviour
 
     public void PreviousStep()
     {
+        if (currentLesson == null || currentLesson.assets == null || currentLesson.assets.Count == 0)
+            return;
+
         if (currentStepIndex > 0)
         {
             currentStepIndex--;
@@ -79,12 +72,17 @@ public class ARSceneManager : MonoBehaviour
 
     private void ShowCurrentStep()
     {
+        if (currentLesson == null || currentLesson.assets == null || currentLesson.assets.Count == 0)
+            return;
+
+        var step = currentLesson.assets[currentStepIndex];
+
         if (lessonUIController != null)
         {
             lessonUIController.ShowLesson(
-                lessonTitle,
-                stepTitles[currentStepIndex],
-                stepContents[currentStepIndex]
+                currentLesson.title,
+                $"Bước {currentStepIndex + 1}",
+                string.IsNullOrEmpty(step.content) ? "Không có nội dung cho bước này." : step.content
             );
         }
     }
@@ -119,5 +117,26 @@ public class ARSceneManager : MonoBehaviour
     public void BackToScanGuide()
     {
         ShowWaitingState();
+    }
+
+    // Dùng tạm nếu muốn test UI mà chưa gọi API
+    public void StartLessonMock()
+    {
+        LessonDetailResponse mockLesson = new LessonDetailResponse
+        {
+            id = 1,
+            title = "Trận Bạch Đằng",
+            description = "Bài học mô phỏng sự kiện lịch sử",
+            content = "Tổng quan bài học",
+            status = "PUBLISHED",
+            assets = new System.Collections.Generic.List<LessonAssetItem>
+            {
+                new LessonAssetItem { id = 1, type = "TEXT", content = "Giới thiệu bối cảnh của sự kiện lịch sử.", orderIndex = 1 },
+                new LessonAssetItem { id = 2, type = "TEXT", content = "Mô tả diễn biến chính của sự kiện.", orderIndex = 2 },
+                new LessonAssetItem { id = 3, type = "TEXT", content = "Kết quả và ý nghĩa của sự kiện.", orderIndex = 3 }
+            }
+        };
+
+        OnLessonLoaded(mockLesson);
     }
 }

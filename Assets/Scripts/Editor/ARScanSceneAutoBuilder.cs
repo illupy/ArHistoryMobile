@@ -183,9 +183,9 @@ public class ARScanSceneAutoBuilder : MonoBehaviour
     {
         var button = buttonGo.GetComponent<Button>();
         button.onClick.RemoveAllListeners();
-        var component = target.GetComponent(methodName.Contains("Home") || methodName.Contains("Step") || methodName.Contains("Quiz") || methodName.Contains("Gamification") ? typeof(ARSceneManager) : typeof(ARSceneManager)) as MonoBehaviour;
-        if (component == null) return;
-        UnityEditor.Events.UnityEventTools.AddPersistentListener(button.onClick, () => component.SendMessage(methodName));
+        var sceneManager = target.GetComponent<ARSceneManager>();
+        if (sceneManager == null) return;
+        button.onClick.AddListener(() => sceneManager.SendMessage(methodName));
     }
 
     static Canvas FindOrCreateCanvas()
