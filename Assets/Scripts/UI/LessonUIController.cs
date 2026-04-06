@@ -9,8 +9,8 @@ public class LessonUIController : MonoBehaviour
 
     public void ShowLesson(string lessonTitle, string stepTitle, string stepContent)
     {
-        lessonTitleText.text = lessonTitle;
-        stepTitleText.text = stepTitle;
-        stepContentText.text = stepContent;
+        if (lessonTitleText != null) lessonTitleText.text = lessonTitle;
+        if (stepTitleText != null) stepTitleText.text = stepTitle;
+        if (stepContentText != null) stepContentText.text = stepContent;
     }
 }

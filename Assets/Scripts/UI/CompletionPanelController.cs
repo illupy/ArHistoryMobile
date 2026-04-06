@@ -7,10 +7,7 @@ public class CompletionPanelController : MonoBehaviour
 
     public void Setup(bool hasQuiz, bool hasGamification)
     {
-        if (quizButton != null)
-            quizButton.SetActive(hasQuiz);
-
-        if (gamificationButton != null)
-            gamificationButton.SetActive(hasGamification);
+        if (quizButton != null) quizButton.SetActive(hasQuiz);
+        if (gamificationButton != null) gamificationButton.SetActive(hasGamification);
     }
 }

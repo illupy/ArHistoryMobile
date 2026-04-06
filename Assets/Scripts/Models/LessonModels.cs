@@ -18,6 +18,10 @@ public class LessonDetailResponse
     public string content;
     public string thumbnailUrl;
     public string status;
+
+    public string previewAudioUrl;
+    public string previewModelCode;
+
     public List<LessonAssetItem> assets;
 }
 
