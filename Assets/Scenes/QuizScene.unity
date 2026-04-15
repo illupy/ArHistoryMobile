@@ -493,6 +493,7 @@ MonoBehaviour:
   answerText3: {fileID: 879389093}
   answerText4: {fileID: 2092699824}
   homeButton: {fileID: 385900205}
+  quizApiService: {fileID: 554462619}
 --- !u!4 &423139963
 Transform:
   m_ObjectHideFlags: 0
@@ -805,6 +806,51 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &554462618
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 554462620}
+  - component: {fileID: 554462619}
+  m_Layer: 0
+  m_Name: QuizApiManger
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &554462619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 554462618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d79041af1002f648b6a1c873876e3a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::QuizApiService
+  baseUrl: http://192.168.1.7:8080/api
+--- !u!4 &554462620
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 554462618}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1280, y: -0.00001, z: 3663.8413}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &743168694
 GameObject:
   m_ObjectHideFlags: 0
@@ -2415,3 +2461,4 @@ SceneRoots:
   - {fileID: 1763994493}
   - {fileID: 503856192}
   - {fileID: 423139963}
+  - {fileID: 554462620}

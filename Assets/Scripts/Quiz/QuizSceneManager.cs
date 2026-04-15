@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using Newtonsoft.Json;
 using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -22,35 +22,16 @@ public class QuizSceneManager : MonoBehaviour
 
     public Button homeButton;
 
-    private List<QuizQuestionData> questions;
+    public QuizApiService quizApiService;
+
+    private QuizDetailResponse currentQuiz;
     private int currentIndex = 0;
     private int score = 0;
 
     private void Start()
     {
-        // Nếu chưa có data từ store thì mock luôn
-        if (QuizSessionStore.Instance == null)
-        {
-            Debug.LogWarning("QuizSessionStore chưa có, dùng mock data cục bộ.");
-            questions = CreateMockQuestions();
-        }
-        else if (QuizSessionStore.Instance.Questions == null || QuizSessionStore.Instance.Questions.Count == 0)
-        {
-            questions = CreateMockQuestions();
-            QuizSessionStore.Instance.SetQuestions(questions);
-        }
-        else
-        {
-            questions = QuizSessionStore.Instance.Questions;
-            currentIndex = QuizSessionStore.Instance.CurrentQuestionIndex;
-            score = QuizSessionStore.Instance.Score;
-        }
-
-        if (lessonTitleText != null)
-            lessonTitleText.text = "Quiz bài học";
-
         BindButtons();
-        ShowQuestion();
+        LoadQuiz();
     }
 
     private void BindButtons()
@@ -72,41 +53,86 @@ public class QuizSceneManager : MonoBehaviour
         }
     }
 
+    private void LoadQuiz()
+    {
+        if (LessonSessionStore.Instance == null || LessonSessionStore.Instance.CurrentLesson == null)
+        {
+            questionText.text = "Không tìm thấy bài học hiện tại.";
+            return;
+        }
+
+        long lessonId = LessonSessionStore.Instance.CurrentLesson.id;
+
+        StartCoroutine(quizApiService.GetQuizByLessonId(
+            lessonId,
+            json =>
+            {
+                ApiResponse<QuizDetailResponse> response =
+                    JsonConvert.DeserializeObject<ApiResponse<QuizDetailResponse>>(json);
+
+                if (response != null && response.success && response.data != null)
+                {
+                    currentQuiz = response.data;
+                    currentIndex = 0;
+                    score = 0;
+
+                    if (QuizSessionStore.Instance != null)
+                    {
+                        QuizSessionStore.Instance.SetQuiz(currentQuiz);
+                    }
+
+                    ShowQuestion();
+                }
+                else
+                {
+                    questionText.text = "Không tải được quiz.";
+                }
+            },
+            error =>
+            {
+                questionText.text = "Lỗi tải quiz: " + error;
+            }
+        ));
+    }
+
     private void ShowQuestion()
     {
-        if (questions == null || questions.Count == 0)
+        if (currentQuiz == null || currentQuiz.questions == null || currentQuiz.questions.Count == 0)
         {
             questionText.text = "Không có câu hỏi.";
             return;
         }
 
-        if (currentIndex >= questions.Count)
+        if (currentIndex >= currentQuiz.questions.Count)
         {
             GoToResult();
             return;
         }
 
-        QuizQuestionData q = questions[currentIndex];
+        var q = currentQuiz.questions[currentIndex];
+
+        if (lessonTitleText != null)
+            lessonTitleText.text = currentQuiz.title;
 
         if (questionIndexText != null)
-            questionIndexText.text = $"Câu {currentIndex + 1}/{questions.Count}";
+            questionIndexText.text = $"Câu {currentIndex + 1}/{currentQuiz.questions.Count}";
 
         if (questionText != null)
             questionText.text = q.question;
 
-        answerText1.text = q.answers.Count > 0 ? q.answers[0] : "";
-        answerText2.text = q.answers.Count > 1 ? q.answers[1] : "";
-        answerText3.text = q.answers.Count > 2 ? q.answers[2] : "";
-        answerText4.text = q.answers.Count > 3 ? q.answers[3] : "";
+        answerText1.text = q.answers.Count > 0 ? q.answers[0].content : "";
+        answerText2.text = q.answers.Count > 1 ? q.answers[1].content : "";
+        answerText3.text = q.answers.Count > 2 ? q.answers[2].content : "";
+        answerText4.text = q.answers.Count > 3 ? q.answers[3].content : "";
     }
 
     private void SelectAnswer(int selectedIndex)
     {
-        if (questions == null || currentIndex >= questions.Count) return;
+        if (currentQuiz == null || currentIndex >= currentQuiz.questions.Count) return;
 
-        QuizQuestionData q = questions[currentIndex];
+        var q = currentQuiz.questions[currentIndex];
 
-        if (selectedIndex == q.correctIndex)
+        if (selectedIndex < q.answers.Count && q.answers[selectedIndex].correct)
         {
             score++;
         }
@@ -115,11 +141,11 @@ public class QuizSceneManager : MonoBehaviour
 
         if (QuizSessionStore.Instance != null)
         {
-            QuizSessionStore.Instance.CurrentQuestionIndex = currentIndex;
             QuizSessionStore.Instance.Score = score;
+            QuizSessionStore.Instance.CurrentQuestionIndex = currentIndex;
         }
 
-        if (currentIndex >= questions.Count)
+        if (currentIndex >= currentQuiz.questions.Count)
         {
             GoToResult();
         }
@@ -137,30 +163,5 @@ public class QuizSceneManager : MonoBehaviour
     private void GoHome()
     {
         SceneManager.LoadScene("HomeScene");
-    }
-
-    private List<QuizQuestionData> CreateMockQuestions()
-    {
-        return new List<QuizQuestionData>
-        {
-            new QuizQuestionData
-            {
-                question = "Trận Bạch Đằng gắn liền với chiến thắng chống quân xâm lược nào?",
-                answers = new List<string> { "Quân Nguyên", "Quân Tống", "Quân Minh", "Quân Thanh" },
-                correctIndex = 0
-            },
-            new QuizQuestionData
-            {
-                question = "Chiến thuật nổi bật trong trận Bạch Đằng là gì?",
-                answers = new List<string> { "Dùng voi chiến", "Dùng cọc gỗ trên sông", "Đắp thành đất", "Phục kích trong rừng" },
-                correctIndex = 1
-            },
-            new QuizQuestionData
-            {
-                question = "Ý nghĩa lớn của chiến thắng Bạch Đằng là gì?",
-                answers = new List<string> { "Mở rộng lãnh thổ", "Kết thúc nội chiến", "Bảo vệ độc lập dân tộc", "Dời đô ra Thăng Long" },
-                correctIndex = 2
-            }
-        };
     }
 }

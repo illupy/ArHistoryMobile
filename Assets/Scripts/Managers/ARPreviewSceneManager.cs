@@ -16,6 +16,8 @@ public class ARPreviewSceneManager : MonoBehaviour
     private LessonDetailResponse currentLesson;
     private int currentStepIndex = 0;
 
+    public PreviewModelPresenter previewModelPresenter;
+
     private void Start()
     {
         ShowWaitingState();
@@ -36,13 +38,17 @@ public class ARPreviewSceneManager : MonoBehaviour
 
         if (scanGuidePanel != null) scanGuidePanel.SetActive(false);
 
+        if (previewModelPresenter != null)
+        {
+            previewModelPresenter.ShowPreviewModel(lesson.previewModelCode);
+        }
+
         if (previewPanelController != null)
         {
-            // Bật luôn nút Start để test flow trước
             previewPanelController.ShowPreview(
                 lesson.title,
                 string.IsNullOrEmpty(lesson.description) ? "Khám phá bài học AR." : lesson.description,
-                true
+                false
             );
         }
     }
@@ -143,6 +149,12 @@ public class ARPreviewSceneManager : MonoBehaviour
     public void BackToScan()
     {
         currentStepIndex = 0;
+
+        if (previewModelPresenter != null)
+        {
+            previewModelPresenter.ClearPreview();
+        }
+
         ShowWaitingState();
     }
 }

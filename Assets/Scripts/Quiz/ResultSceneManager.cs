@@ -17,10 +17,12 @@ public class ResultSceneManager : MonoBehaviour
         int score = 0;
         int total = 0;
 
-        if (QuizSessionStore.Instance != null)
+        if (QuizSessionStore.Instance != null && QuizSessionStore.Instance.CurrentQuiz != null)
         {
             score = QuizSessionStore.Instance.Score;
-            total = QuizSessionStore.Instance.Questions != null ? QuizSessionStore.Instance.Questions.Count : 0;
+            total = QuizSessionStore.Instance.CurrentQuiz.questions != null
+                ? QuizSessionStore.Instance.CurrentQuiz.questions.Count
+                : 0;
         }
 
         if (resultTitleText != null)

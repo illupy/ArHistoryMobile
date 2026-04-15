@@ -2,13 +2,14 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
-public class LessonApiService : MonoBehaviour
+public class QuizApiService : MonoBehaviour
 {
     public string baseUrl = "http://192.168.1.7:8080/api";
 
-    public IEnumerator GetLessonByMarker(string markerCode, System.Action<string> onSuccess, System.Action<string> onError)
+
+    public IEnumerator GetQuizByLessonId(long lessonId, System.Action<string> onSuccess, System.Action<string> onError)
     {
-        string url = $"{baseUrl}/lessons/by-marker/{markerCode}";
+        string url = $"{baseUrl}/quizzes/lesson/{lessonId}";
 
         using (UnityWebRequest request = UnityWebRequest.Get(url))
         {
@@ -20,7 +21,7 @@ public class LessonApiService : MonoBehaviour
             }
             else
             {
-                onError?.Invoke(request.error);
+                onError?.Invoke(request.error + " " + url);
             }
         }
     }

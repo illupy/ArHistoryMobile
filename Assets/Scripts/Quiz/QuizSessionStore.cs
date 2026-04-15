@@ -5,7 +5,7 @@ public class QuizSessionStore : MonoBehaviour
 {
     public static QuizSessionStore Instance;
 
-    public List<QuizQuestionData> Questions = new List<QuizQuestionData>();
+    public QuizDetailResponse CurrentQuiz;
     public int CurrentQuestionIndex = 0;
     public int Score = 0;
 
@@ -21,9 +21,9 @@ public class QuizSessionStore : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void SetQuestions(List<QuizQuestionData> questions)
+    public void SetQuiz(QuizDetailResponse quiz)
     {
-        Questions = questions;
+        CurrentQuiz = quiz;
         CurrentQuestionIndex = 0;
         Score = 0;
     }

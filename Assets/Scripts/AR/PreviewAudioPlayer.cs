@@ -7,58 +7,57 @@ public class PreviewAudioPlayer : MonoBehaviour
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private ARPreviewSceneManager arPreviewSceneManager;
 
-    private Coroutine playRoutine;
+    private Coroutine currentRoutine;
 
     public void PlayPreviewAudio(string audioUrl)
     {
+        StopPreviewAudio();
+
         if (string.IsNullOrEmpty(audioUrl))
         {
-            Debug.Log("Không có audio preview, bật luôn nút bắt đầu bài học.");
             arPreviewSceneManager.OnPreviewVoiceCompleted();
             return;
         }
 
-        if (playRoutine != null)
-        {
-            StopCoroutine(playRoutine);
-        }
-
-        playRoutine = StartCoroutine(LoadAndPlayAudio(audioUrl));
+        currentRoutine = StartCoroutine(LoadAndPlay(audioUrl));
     }
 
     public void SkipPreviewAudio()
     {
-        if (playRoutine != null)
+        StopPreviewAudio();
+        arPreviewSceneManager.OnPreviewVoiceCompleted();
+    }
+
+    public void StopPreviewAudio()
+    {
+        if (currentRoutine != null)
         {
-            StopCoroutine(playRoutine);
-            playRoutine = null;
+            StopCoroutine(currentRoutine);
+            currentRoutine = null;
         }
 
         if (audioSource != null && audioSource.isPlaying)
         {
             audioSource.Stop();
         }
-
-        arPreviewSceneManager.OnPreviewVoiceCompleted();
     }
 
-    private IEnumerator LoadAndPlayAudio(string url)
+    private IEnumerator LoadAndPlay(string url)
     {
         using UnityWebRequest request = UnityWebRequestMultimedia.GetAudioClip(url, AudioType.MPEG);
         yield return request.SendWebRequest();
 
         if (request.result != UnityWebRequest.Result.Success)
         {
-            Debug.LogError("Lỗi tải audio preview: " + request.error);
+            Debug.LogError("Load preview audio failed: " + request.error);
             arPreviewSceneManager.OnPreviewVoiceCompleted();
             yield break;
         }
 
         AudioClip clip = DownloadHandlerAudioClip.GetContent(request);
 
-        if (audioSource == null)
+        if (audioSource == null || clip == null)
         {
-            Debug.LogError("AudioSource chưa được gán.");
             arPreviewSceneManager.OnPreviewVoiceCompleted();
             yield break;
         }
