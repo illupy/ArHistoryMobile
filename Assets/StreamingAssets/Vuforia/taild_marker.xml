@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QCARConfig>
+  <Tracking>
+    <ImageTarget name="NGUYEN_TRAI" size="0.050000 0.050000" />
+    <ImageTarget name="BACH_DANG_001" size="0.500000 0.332500" />
+    <ImageTarget name="HAI_BA_TRUNG_001" size="0.100000 0.132900" />
+  </Tracking>
+</QCARConfig>
